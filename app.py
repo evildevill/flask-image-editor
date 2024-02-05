@@ -198,4 +198,4 @@ class ImageProcessAPI(Resource):
 
 api.add_resource(ImageProcessAPI, '/api/process')
 
-app.run(debug=True)
+app.run(debug=True, port=5000)
