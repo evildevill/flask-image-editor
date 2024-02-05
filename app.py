@@ -8,6 +8,8 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import numpy as np
 from flask_limiter import Limiter
+from flask import request
+import json
 
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'png', 'webp', 'jpg', 'jpeg', 'gif'}
@@ -48,7 +50,8 @@ def processImage(filename, operation):
             cv2.imwrite(newFilename, img)
             return newFilename
         case "cblur": # used for blurring the image ok
-            imgProcessed = cv2.GaussianBlur(img, (5, 5), 0)
+            # blur intensity 60 x 60
+            imgProcessed = cv2.blur(img, (50, 50))
             newFilename = f"static/{filename}"
             cv2.imwrite(newFilename, imgProcessed)
             return newFilename
@@ -150,8 +153,12 @@ def edit():
 
     return render_template("index.html")
 
+# Limitar
+def get_remote_address():
+    return request.remote_addr
+ 
 # Initialize the Flask Limiter
-limiter = Limiter(app, key_func=get_remote_address)
+limiter = Limiter(app=app, key_func=get_remote_address)
 
 # API
 class ImageProcessAPI(Resource):
